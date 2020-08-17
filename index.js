@@ -20,7 +20,7 @@ module.exports = function (RED) {
           done();
         });
     
-        node.on("input", function (msg) {
+        node.on("input", function (msg, send, done) {
           let checks = [];
           node.props.forEach(p => {
             var property = p.p;
@@ -33,14 +33,16 @@ module.exports = function (RED) {
             checks.push(check(data));
           });
           if(checks.every((el)=>{ return el === true;})){
-              node.send([msg,null]);
+              send([msg,null]);
+              done();
           }else{
               msg.errors = checks.map((el)=>{if(el === true){
                 return [];
               }else{
                 return el;
               }});
-              node.send([null,msg])
+              send([null,msg]);
+              done();
           }
         });
       }
