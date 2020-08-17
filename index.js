@@ -22,6 +22,8 @@ module.exports = function (RED) {
     
         node.on("input", function (msg, send, done) {
           let checks = [];
+          send = send || function() { node.send.apply(node,arguments) }
+          done = done || function(err) { if(err)node.error(err, msg); }
           node.props.forEach(p => {
             var property = p.p;
             var check = p.ck;
