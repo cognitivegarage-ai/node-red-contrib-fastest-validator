@@ -1,0 +1,147 @@
+<script type="text/javascript">
+    /*global RED*/
+
+function resizeDialog(size) {
+    size = size || { height: $(".red-ui-tray-content form").height() }
+    var rows = $("#dialog-form>div:not(.node-input-property-container-row):visible");
+    var height = size.height;
+    for (var i=0; i<rows.length; i++) {
+        height -= $(rows[i]).outerHeight(true);
+    }
+    var editorRow = $("#dialog-form>div.node-input-property-container-row");
+    height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+    height += 16;
+    $("#node-input-property-container").editableList('height',height);
+}
+    RED.nodes.registerType('fastest-validator', {
+        category: 'function',
+        inputs: 1,
+        outputs: 2,
+        color: "#E2D96E",
+        icon: "font-awesome/fa-bolt",
+        align: "left",
+        paletteLabel: "fastest validator",
+        defaults: {
+            props:{value:[{p:"payload","vt":"json"}]},
+            name: {
+                value: ""
+            }
+        },
+        outputLabels: function(index) {
+            var lab = '';
+            var props = this.props;
+            if (props) {
+                for (var i=0,l=props.length; i<l; i++) {
+                    if (i > 0) lab += "\n";
+                    if (i === 5) {
+                        lab += " + "+(props.length-4);
+                        break;
+                    }
+                    lab += props[i].p+": ";
+
+                    var propType = props[i].p === "payload"? this.payloadType : props[i].vt;
+                    if (propType === "json") {
+                        try {
+                            var parsedProp = JSON.parse(props[i].p === "payload"? this.payload : props[i].v);
+                            propType = typeof parsedProp;
+                            if (propType === "object" && Array.isArray(parsedProp)) {
+                                propType = "Array";
+                            }
+                        } catch(e) {
+                            propType = "invalid";
+                        }
+                    }
+                    lab += this._("inject.label."+propType);
+                }
+            }
+            return lab;
+        },
+        oneditprepare: function () {
+            $('#node-input-property-container').css('min-height','120px').css('min-width','450px').editableList({
+                addItem: function(container,i,opt) {
+                    var prop = opt;
+                    if (!prop.hasOwnProperty('p')) {
+                        prop = {p:"payload",v:"{}",vt:"json"};
+                    }
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap'
+                    });
+                    var row = $('<div/>').appendTo(container);
+
+                    var propertyName = $('<input/>',{class:"node-input-prop-property-name",type:"text"})
+                        .css("width","30%")
+                        .appendTo(row)
+                        .typedInput({types:['msg']});
+
+                    $('<div/>',{style: 'display:inline-block; padding:0px 6px;'})
+                        .text('=')
+                        .appendTo(row);
+
+                    var propertyValue = $('<input/>',{class:"node-input-prop-property-value",type:"text"})
+                        .css("width","calc(70% - 30px)")
+                        .appendTo(row)
+                        .typedInput({default:'json',types:['json']});
+
+                    propertyName.typedInput('value',prop.p);
+
+                    propertyValue.typedInput('value',prop.v);
+                    propertyValue.typedInput('type',prop.vt);
+                },
+                removable: true,
+                sortable: true
+            });
+            for (var i=0; i<this.props.length; i++) {
+                var prop = this.props[i];
+                var newProp = { p: prop.p, v: prop.v, vt: prop.vt };
+                if (newProp.v === undefined) {
+                    if (prop.p === 'payload') {
+                        newProp.v = this.payload ? this.payload : '';
+                        newProp.vt = this.payloadType ? this.payloadType : 'date';
+                    } else if (prop.p === 'topic' && prop.vt === "str") {
+                        newProp.v =  this.topic ? this.topic : '';
+                    }
+                }
+                $("#node-input-property-container").editableList('addItem',newProp);
+            }
+        },
+        oneditsave: function(){
+            var props = $("#node-input-property-container").editableList('items');
+            var node = this;
+            node.props= [];
+            node.topic = "";
+            props.each(function(i) {
+                var prop = $(this);
+                var p = {
+                    p:prop.find(".node-input-prop-property-name").typedInput('value')
+                };
+                if (p.p) {
+                    p.v = prop.find(".node-input-prop-property-value").typedInput('value');
+                    p.vt = prop.find(".node-input-prop-property-value").typedInput('type');
+                    node.props.push(p);
+                }
+            });
+        },
+        oneditresize: resizeDialog,
+        label: function () {
+            return this.name || this.topic || "validator";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="fastest-validator">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row node-input-property-container-row">
+        <ol id="node-input-property-container"></ol>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="fastest-validator">
+    <p>Fastest Validator</p>
+    <p>Uses the <a href="https://github.com/icebob/fastest-validator">Fastest Validator</a> to validate the received message.</p>
+    <p>You could validate any property of msg, and return of failed validations will be stored on msg.errors property.</p>
+    <p>Note: You could only write a valid JSON schema to validate your message and JSON form not support js functions(custom fastest validator rules).</p>
+</script>
