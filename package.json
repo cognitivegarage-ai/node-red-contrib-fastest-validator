@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-fastest-validator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Fastest Validator Port for NodeRED",
   "main": "index.js",
   "scripts": {
