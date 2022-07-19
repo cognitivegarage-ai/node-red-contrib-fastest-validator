@@ -1,14 +1,10 @@
 {
-  "name": "node-red-contrib-fastest-validator",
-  "version": "1.0.4",
+  "name": "@cgpl/nodered-fastest-validator",
+  "version": "0.1.0",
   "description": "Fastest Validator Port for NodeRED",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/chameleonbr/node-red-contrib-fastest-validator.git"
   },
   "keywords": [
     "node-red",
@@ -22,17 +18,21 @@
       "validator": "index.js"
     }
   },
-  "bugs": {
-    "url": "https://github.com/chameleonbr/node-red-contrib-fastest-validator/issues"
-  },
   "maintainers": [
-    {
-      "name": "chameleonbr",
-      "email": "chameleonbr@gmail.com"
-    }
+    "chameleonbr <chameleonbr@gmail.com>"
   ],
-  "homepage": "https://github.com/chameleonbr/node-red-contrib-fastest-validator#readme",
+  "contributors": [
+    "Shivansh <shivansh@cognitivegarage.ai>"
+  ],
   "dependencies": {
     "fastest-validator": "^1.6.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cognitivegarage-ai/node-red-contrib-fastest-validator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cognitivegarage-ai/node-red-contrib-fastest-validator/issues"
+  },
+  "homepage": "https://github.com/cognitivegarage-ai/node-red-contrib-fastest-validator#readme"
 }
