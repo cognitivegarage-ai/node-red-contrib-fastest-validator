@@ -1,6 +1,6 @@
 {
   "name": "@cgpl/nodered-fastest-validator",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Fastest Validator Port for NodeRED",
   "main": "index.js",
   "scripts": {

@@ -43,8 +43,8 @@ module.exports = function (RED) {
               }else{
                 return el;
               }});
-              send([null,msg]);
-              done();
+              // send([null,msg]);
+              done("Validation Error", msg);
           }
         });
       }
